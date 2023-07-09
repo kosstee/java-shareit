@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface ItemService {
 
@@ -11,7 +10,7 @@ public interface ItemService {
 
     ItemDto getItemById(Long itemId);
 
-    ItemDto updateItem(Long userId, Map<String, Object> updates, Long itemId);
+    ItemDto updateItem(Long userId, ItemDto itemDto, Long itemId);
 
     Collection<ItemDto> getAllUserItems(Long userId);
 

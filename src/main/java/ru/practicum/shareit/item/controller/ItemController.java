@@ -8,11 +8,7 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.Map;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @RestController
 @RequestMapping("/items")
@@ -22,7 +18,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto add(@RequestHeader("X-Sharer-User-Id") long userId,
                        @Valid @RequestBody ItemDto itemDto) {
         ItemDto response = itemService.addNewItem(userId, itemDto);
         log.info("Created {}", response);
@@ -30,7 +26,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") long userId,
                                @PathVariable Long itemId) {
         ItemDto response = itemService.getItemById(itemId);
         log.info("Received {}", response);
@@ -38,23 +34,23 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId,
-                              @Valid @RequestBody Map<String, Object> updates,
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+                              @RequestBody ItemDto itemDto,
                               @PathVariable Long itemId) {
-        ItemDto response = itemService.updateItem(userId, updates, itemId);
+        ItemDto response = itemService.updateItem(userId, itemDto, itemId);
         log.info("Updated {}", response);
         return response;
     }
 
     @GetMapping
-    public Collection<ItemDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<ItemDto> getAllUserItems(@RequestHeader("X-Sharer-User-Id") long userId) {
         Collection<ItemDto> response = itemService.getAllUserItems(userId);
         log.info("Received {}", response);
         return response;
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public Collection<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") long userId,
                                            @RequestParam String text) {
         Collection<ItemDto> response = itemService.searchItems(text);
         log.info("Found {}", response);
@@ -62,7 +58,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public void deleteItem(@RequestHeader("X-Sharer-User-Id") long userId,
                            @PathVariable Long itemId) {
         itemService.deleteItem(userId, itemId);
     }

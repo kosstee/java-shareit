@@ -7,10 +7,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.DuplicateEmailException;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -37,10 +37,10 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    private UserDto checkEmail(String email) {
+    private User checkEmail(String email) {
         String sqlQuery = "SELECT * FROM USERS WHERE EMAIL = ?";
         try {
-            return jdbcTemplate.queryForObject(sqlQuery, (resultSet, rowNum) -> UserMapper.toUserDto(resultSet), email);
+            return jdbcTemplate.queryForObject(sqlQuery, (resultSet, rowNum) -> rowMapper(resultSet), email);
         } catch (DataAccessException e) {
             log.info("Email = {} is not busy", email);
             return null;
@@ -48,40 +48,40 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserDto getById(Long userId) {
+    public User getById(Long userId) {
         String sqlQuery = "SELECT * FROM USERS WHERE USER_ID = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, (resultSet, rowNum) -> UserMapper.toUserDto(resultSet), userId);
+        return jdbcTemplate.queryForObject(sqlQuery, (resultSet, rowNum) -> rowMapper(resultSet), userId);
     }
 
     @Override
-    public Collection<UserDto> getAll() {
+    public Collection<User> getAll() {
         String sqlQuery = "SELECT * FROM USERS";
-        return jdbcTemplate.query(sqlQuery, (resultSet, rowNum) -> UserMapper.toUserDto(resultSet));
+        return jdbcTemplate.query(sqlQuery, (resultSet, rowNum) -> rowMapper(resultSet));
     }
 
     @Override
-    public UserDto update(Long userId, UserDto userDto) throws DuplicateEmailException {
-        if (checkEmail(userDto.getEmail()) != null) {
+    public User update(Long userId, User user) throws DuplicateEmailException {
+        if (checkEmail(user.getEmail()) != null) {
             throw new DuplicateEmailException(
-                    "User with email = " + userDto.getEmail() + " already exists");
+                    "User with email = " + user.getEmail() + " already exists");
         }
 
         String sqlQuery = "UPDATE USERS SET USER_NAME = ?, EMAIL = ? WHERE USER_ID = ?";
-        jdbcTemplate.update(sqlQuery, userDto.getName(), userDto.getEmail(), userId);
+        jdbcTemplate.update(sqlQuery, user.getName(), user.getEmail(), userId);
         return getById(userId);
     }
 
     @Override
-    public UserDto updateName(Long userId, UserDto userDto) {
+    public User updateName(Long userId, User user) {
         String sqlQuery = "UPDATE USERS SET USER_NAME = ? WHERE USER_ID = ?";
-        jdbcTemplate.update(sqlQuery, userDto.getName(), userId);
+        jdbcTemplate.update(sqlQuery, user.getName(), userId);
         return getById(userId);
     }
 
     @Override
-    public UserDto updateEmail(Long userId, UserDto userDto) {
+    public User updateEmail(Long userId, User user) {
         String sqlQuery = "UPDATE USERS SET EMAIL = ? WHERE USER_ID = ?";
-        jdbcTemplate.update(sqlQuery, userDto.getEmail(), userId);
+        jdbcTemplate.update(sqlQuery, user.getEmail(), userId);
         return getById(userId);
     }
 
@@ -89,5 +89,13 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean delete(Long userId) {
         String sqlQuery = "DELETE FROM USERS WHERE USER_ID = ?";
         return jdbcTemplate.update(sqlQuery, userId) > 0;
+    }
+
+    private User rowMapper(ResultSet resultSet) throws SQLException {
+        return User.builder()
+                .id(resultSet.getLong("USER_ID"))
+                .name(resultSet.getString("USER_NAME"))
+                .email(resultSet.getString("EMAIL"))
+                .build();
     }
 }

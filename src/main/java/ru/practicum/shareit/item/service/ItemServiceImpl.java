@@ -11,9 +11,11 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.item.mapper.ItemMapper.toItem;
+import static ru.practicum.shareit.item.mapper.ItemMapper.toItemDto;
 
 @Slf4j
 @Service
@@ -24,17 +26,17 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addNewItem(Long userId, ItemDto itemDto) {
-        return repository.addNewItem(userId, itemDto);
+        Item createdItem = repository.addNewItem(userId, toItem(itemDto));
+        return toItemDto(createdItem);
     }
 
     @Override
     public ItemDto getItemById(Long itemId) {
-        return ItemMapper.toItemDto(repository.getById(itemId));
+        return toItemDto(repository.getById(itemId));
     }
 
     @Override
-    public ItemDto updateItem(
-            Long userId, Map<String, Object> updates, Long itemId) throws NotEnoughRightsToEditException {
+    public ItemDto updateItem(Long userId, ItemDto itemDto, Long itemId) throws NotEnoughRightsToEditException {
         Item item = repository.getById(itemId);
         boolean isUserOwnerItem = Objects.equals(item.getOwnerId(), userId);
 
@@ -44,22 +46,7 @@ public class ItemServiceImpl implements ItemService {
                     "Not enough rights to edit item with id = " + itemId);
         }
 
-        ItemDto itemDto = ItemMapper.toItemDto(item);
-
-        for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            switch (entry.getKey()) {
-                case "name":
-                    itemDto.setName(entry.getValue().toString());
-                    break;
-                case "description":
-                    itemDto.setDescription(entry.getValue().toString());
-                    break;
-                case "available":
-                    itemDto.setAvailable(Boolean.valueOf(entry.getValue().toString()));
-                    break;
-            }
-        }
-        return ItemMapper.toItemDto(repository.updateItem(itemDto, itemId));
+        return toItemDto(repository.updateItem(toItem(itemDto), itemId));
     }
 
     @Override

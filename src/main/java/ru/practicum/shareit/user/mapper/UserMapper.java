@@ -1,17 +1,23 @@
 package ru.practicum.shareit.user.mapper;
 
 import ru.practicum.shareit.user.dto.UserDto;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import ru.practicum.shareit.user.model.User;
 
 public class UserMapper {
 
-    public static UserDto toUserDto(ResultSet resultSet) throws SQLException {
+    public static UserDto toUserDto(User user) {
         return UserDto.builder()
-                .id(resultSet.getLong("USER_ID"))
-                .name(resultSet.getString("USER_NAME"))
-                .email(resultSet.getString("EMAIL"))
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
+    }
+
+    public static User toUser(UserDto userDto) {
+        return User.builder()
+                .id(userDto.getId())
+                .name(userDto.getName())
+                .email(userDto.getEmail())
                 .build();
     }
 }

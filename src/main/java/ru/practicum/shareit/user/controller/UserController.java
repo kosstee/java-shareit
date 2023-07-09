@@ -4,16 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -23,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    User create(@Valid @NotNull @RequestBody User user) {
-        User response = userService.create(user);
+    UserDto create(@Valid @NotNull @RequestBody UserDto userDto) {
+        UserDto response = userService.create(userDto);
         log.info("Created {}", response);
         return response;
     }
