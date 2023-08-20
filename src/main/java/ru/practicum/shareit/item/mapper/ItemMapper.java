@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.mapper;
 
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 public class ItemMapper {
 
@@ -10,7 +11,8 @@ public class ItemMapper {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .available(item.getAvailable())
+                .available(item.getIsAvailable())
+                .ownerId(item.getOwner() != null ? item.getOwner().getId() : null)
                 .build();
     }
 
@@ -19,7 +21,10 @@ public class ItemMapper {
                 .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
-                .available(itemDto.getAvailable())
+                .isAvailable(itemDto.getAvailable())
+                .owner(User.builder()
+                        .id(itemDto.getOwnerId() != null ? itemDto.getOwnerId() : null)
+                        .build())
                 .build();
     }
 }

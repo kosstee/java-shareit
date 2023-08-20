@@ -47,9 +47,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    boolean delete(@PathVariable("id") Long userId) {
-        boolean response = userService.delete(userId);
-        log.info("Deleting user with id = {}: {}", userId, response);
-        return response;
+    void delete(@PathVariable("id") Long userId) {
+        userService.delete(userId);
+        log.info("Deleting user with id = {}", userId);
     }
 }
