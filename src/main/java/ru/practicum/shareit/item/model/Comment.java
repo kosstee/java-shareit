@@ -1,14 +1,16 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "comments")
-@Data
 public class Comment {
 
     @Id

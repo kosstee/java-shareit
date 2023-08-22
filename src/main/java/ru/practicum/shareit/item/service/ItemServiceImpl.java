@@ -147,8 +147,9 @@ public class ItemServiceImpl implements ItemService {
 
         List<Booking> bookings = bookingRepository.findAllByBookerIdPast(bookerId);
 
-        if (bookings.isEmpty())
+        if (bookings.isEmpty()) {
             throw new CommentNotAuthorisedException("Booking from user " + bookerId + " for item " + itemId + " doesn't exist");
+        }
 
         Booking booking = new Booking();
         for (Booking b : bookings) {
